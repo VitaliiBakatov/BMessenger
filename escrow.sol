@@ -5,7 +5,6 @@ contract Escrow {
     uint256 private sum;
     uint256 private deadline;
  
-    // enum State { awate_payment, awate_delivery, complete } ???
     enum State {created, inProgress, done, cancel}
 
     Deal[] private deals;           // по id сделки
@@ -23,7 +22,8 @@ contract Escrow {
         uint256 deposited;   // внесенная сумма
         uint256 deadline;
         State currentState;  // enum
-    }                                        
+    }     
+                                       
       
     modifier instate(uint256 id, State expected_state) { 
         require(deals[id].currentState == expected_state,
@@ -54,6 +54,7 @@ contract Escrow {
             "Deadline for this service is over");
         _; 
     } 
+
 
     function addDeal(
         address payable _executor,
@@ -94,14 +95,13 @@ contract Escrow {
             require(success, "Failed to transfer Ether to executor");
     } 
     
-    // возврат покупателю
+    // возврат покупателю с контракта (суммы, равной его deposited)
     function returnPayment(uint256 id) onlyExecutor(id) checkDeadline(id)
         instate(id,State.inProgress)
         public
     { 
         setState(id,State.cancel);
         uint256 toSend = deals[id].deposited;
-        deals[id].sum += toSend;
         deals[id].deposited = 0;
         (bool success, ) = payable(deals[id].customer).call{value: toSend}("");  
             require(success, "Failed to transfer Ether to customer");
