@@ -80,7 +80,7 @@ contract Escrow {
     {  
         uint256 toSend = deals[id].deposited;
         if (deals[id].sum < toSend) 
-            toSend = sum;
+            toSend = deals[id].sum;
         deals[id].deposited -= toSend;
         deals[id].sum -= toSend;
         if (deals[id].sum == 0) 
