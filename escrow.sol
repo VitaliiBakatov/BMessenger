@@ -1,10 +1,6 @@
 pragma solidity 0.8.7;      
 
 contract Escrow {  
-    string private service;
-    uint256 private sum;
-    uint256 private deadline;
- 
     enum State {created, inProgress, done, cancel}
 
     Deal[] private deals;           // по id сделки
@@ -22,8 +18,7 @@ contract Escrow {
         uint256 deposited;   // внесенная сумма
         uint256 deadline;
         State currentState;  // enum
-    }     
-                                       
+    }                                      
       
     modifier instate(uint256 id, State expected_state) { 
         require(deals[id].currentState == expected_state,
@@ -54,7 +49,6 @@ contract Escrow {
             "Deadline for this service is over");
         _; 
     } 
-
 
     function addDeal(
         address payable _executor,
@@ -108,11 +102,11 @@ contract Escrow {
     }   
 
     
-    function getIdCust() public view returns (uint256[] memory) {
+    function getCustDeals() public view returns (uint256[] memory) {
         return custDeals[msg.sender];
     }  
 
-    function getIdEx() public view returns (uint256[] memory) {
+    function getExDeals() public view returns (uint256[] memory) {
         return exDeals[msg.sender];
     }  
 
